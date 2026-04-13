@@ -1,4 +1,3 @@
-```markdown
 # SPSC Ring Buffer
 
 A lock-free single-producer single-consumer ring buffer implemented in modern C++.
@@ -34,8 +33,6 @@ Two threads communicate through three atomic variables and nothing else.
 Hardware: Apple Silicon MacBook Pro
 Operations: 10,000,000
 
-```
-SPSC Ring Buffer:  8 ns per operation
 ```
 
 8 nanoseconds. One operation in 8 billionths of a second.
