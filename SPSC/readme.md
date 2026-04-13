@@ -33,7 +33,7 @@ Two threads communicate through three atomic variables and nothing else.
 Hardware: Apple Silicon MacBook Pro
 Operations: 10,000,000
 
-```
+
 
 8 nanoseconds. One operation in 8 billionths of a second.
 
@@ -43,11 +43,11 @@ Operations: 10,000,000
 
 ### alignas(64) — cache line isolation
 
-```cpp
+cpp
 alignas(64) std::atomic<size_t> head_{0};
 alignas(64) std::atomic<size_t> tail_{0};
 alignas(64) T data_[N];
-```
+
 
 A CPU fetches memory in 64-byte chunks called cache lines.
 Without alignment, head_ and tail_ share one cache line.
