@@ -43,7 +43,7 @@ Operations: 10,000,000
 
 ### alignas(64) — cache line isolation
 
-cpp
+``` cpp
 alignas(64) std::atomic<size_t> head_{0};
 alignas(64) std::atomic<size_t> tail_{0};
 alignas(64) T data_[N];
