@@ -1,8 +1,9 @@
-# Concurrency
+# Concurrency in Modern C++
 
 Four concurrency primitives built from scratch in modern C++17, with
 documentation and a benchmark suite comparing each against its mutex-based
-equivalent.
+equivalent. Implementations go beyond textbook examples to demonstrate real
+understanding of hardware behaviour and performance.
 
 ---
 
@@ -27,27 +28,26 @@ Concurrency/
 | Mutex Queue                   | push+pop, 10M ops, 2 threads      | 82.7 ns   | 12 Mops/s       |
 | Lock-Free Stack               | push+pop, 1M ops, single-thread   | 8.1 ns    | 123 Mops/s      |
 | Mutex Stack (no contention)   | push+pop, 1M ops, single-thread   | 4.0 ns    | 252 Mops/s      |
-| Thread Pool — light tasks     | 400 tasks × 100 µs, 14 workers    | —         | 95K tasks/s     |
-| Thread Pool — light tasks     | 400 tasks × 100 µs, 1 worker      | —         | 11K tasks/s     |
+| Thread Pool — heavy tasks     | 400 tasks × 100 µs, 14 workers    | —         | 95K tasks/s     |
+| Thread Pool — heavy tasks     | 400 tasks × 100 µs, 1 worker      | —         | 11K tasks/s     |
 | `relaxed` / `seq_cst`         | fetch_add, 20M ops, single-thread | ~1.6 ns   | ~630 Mops/s     |
 
 **Takeaways:**
 - SPSC queue is **7× faster** than a mutex queue under producer-consumer load.
-- An uncontended mutex is faster than CAS in the single-threaded case — lock-free wins under contention.
+- An uncontended mutex is faster than CAS single-threaded — lock-free wins under contention.
 - Thread pool scales **~9× across 14 cores** when tasks are large enough (>> scheduling overhead).
-- On Apple Silicon, `relaxed` and `seq_cst` fetch_add cost the same; the gap is larger under cross-core contention and on weaker-memory-model CPUs (ARM cortex).
+- On Apple Silicon, `relaxed` and `seq_cst` fetch_add cost the same; the gap is larger on ARM Cortex and under cross-core contention.
 
 ---
 
 ## Quick start
 
 ```bash
-git clone <repo>
+git clone https://github.com/anishbasnetAB/Concurrency
 cd Concurrency
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
-# Run everything
 ./build/bench             # full benchmark suite
 ./build/thread_pool_demo
 ./build/spsc_demo
@@ -70,7 +70,7 @@ execute in parallel. Clean shutdown via RAII destructor.
 **Key insight:** Holding the mutex during task execution serialises all workers
 into a single thread — defeating the purpose of a pool.
 
-### [SPSC Queue](spsc/)
+### [SPSC Queue](SPSC/)
 
 Lock-free ring buffer for exactly one producer and one consumer. Uses
 `memory_order_release/acquire` to synchronise data without a mutex, and
@@ -101,7 +101,17 @@ but costs a memory fence on every store.
 
 ---
 
-## Design philosophy
+## Concepts covered
 
-Each primitive is header-only and self-contained. No external dependencies.
-Documentation explains *why* each decision was made, not just what the code does.
+- `std::thread`, `std::mutex`, `std::condition_variable`
+- Lock-free programming with `std::atomic`
+- Memory ordering (`memory_order_relaxed`, `memory_order_acquire`, `memory_order_release`, `memory_order_seq_cst`)
+- False sharing and cache-line optimisation with `alignas(64)`
+- Compare-and-swap (CAS) and the ABA problem
+- Producer-consumer pattern without OS involvement
+
+---
+
+## Author
+
+[Anish Basnet](https://github.com/anishbasnetAB)

@@ -1,4 +1,4 @@
-# SPSC Queue
+# SPSC Ring Buffer
 
 A lock-free single-producer single-consumer ring buffer in modern C++.
 
@@ -25,8 +25,8 @@ three atomic variables and nothing else.
 **Benchmark (Apple M-series, 10M ops, 2 threads):**
 
 ```
-SPSC Queue (lock-free):   ~8 ns/op     ~125 Mops/s
-Mutex Queue:            ~500 ns/op     ~2   Mops/s
+SPSC Queue (lock-free):   ~12 ns/op     ~87 Mops/s
+Mutex Queue:              ~83 ns/op     ~12 Mops/s
 ```
 
 ---
@@ -151,3 +151,4 @@ g++ -std=c++17 -O2 -pthread demo.cpp -o spsc_demo && ./spsc_demo
 - Bitwise modulo for power-of-2 ring buffers
 - Template metaprogramming for zero-cost abstractions
 - Nanosecond-precision benchmarking with `std::chrono`
+- Producer-consumer synchronisation without OS involvement
